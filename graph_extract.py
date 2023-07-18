@@ -33,18 +33,21 @@ def sort_info_func(mylines, sidx, fidx):
         sort_info.append(raw_line(mylines[i]))
     return sort_info
 
-def pandh_ls(sort_info):
+def pandh_ls(sort_info, nodeidx, edgeidx):
     patch_ls = []
     head_ls = []
     for i in range(len(sort_info)):
-        if sort_info[i][1] == 2: # 2 is patch
+        if sort_info[i][1] == nodeidx: # 2 is patch
             patch_ls.append(i) 
-        elif sort_info[i][1] == 3: # 3 is head
+        elif sort_info[i][1] == edgeidx: # 3 is head
             head_ls.append(i)
     return patch_ls, head_ls
 
-def bond_ls_func(sort_info, linker_num, patch_ls, head_ls):
+def bond_ls_func(sort_info, linker_num, patch_ls, head_ls, npatch, nbead, colloid_num, bcutoff):
     bond_ls = []
+    tscol = npatch + 1
+    ttcol = (npatch + 1)*colloid_num
+    ttlnk = nbead + 2
     for b in range(linker_num):
         bond_ls.append(list())
     head_all_info = []
@@ -53,15 +56,15 @@ def bond_ls_func(sort_info, linker_num, patch_ls, head_ls):
         head_all_info.append(sort_info[j][2])
         head_iidx.append(sort_info[j][0])
     for i in patch_ls:
-        cidx = (sort_info[i][0] - 1)//7
+        cidx = (sort_info[i][0] - 1)//tscol
         icoor = sort_info[i][2]
         collect_dis = dis_mat(icoor, head_all_info)
         test_list = list(collect_dis)
-        res = [idx for idx, val in enumerate(test_list) if val < 0.5]
+        res = [idx for idx, val in enumerate(test_list) if val < bcutoff]
         if len(res) > 0:
             for k in res:
                 bbidx = head_iidx[k]
-                jjidx = (bbidx - 7000 - 1)//8 #(1000 + 6*1000 = 7000)
+                jjidx = (bbidx - ttcol - 1)//ttlnk #(1000 + 6*1000 = 7000)
                 bond_ls[jjidx].append(cidx)
     return bond_ls
 
@@ -82,23 +85,6 @@ def avg_deg(degree_ls):
         sum_deg.append(i[1])
     return sum(sum_deg)/len(sum_deg)
 
-def global_eff(G, bigc, size):
-    p = nx.shortest_path(G)
-    node_idx = -1
-    for i in range(size):
-        not_in_the_same_c = []
-        for j in range(len(bigc)):
-            if i in bigc[j]:
-                node_idx = j
-    return p
-
-def avg_nodal_conn(G, size):
-    sum_k = []
-    for i in range(size):
-        for j in range(i+1,size):
-            sum_k.append(nx.node_connectivity(G, i, j))
-    avg_nc = 2*sum(sum_k)/size/(size-1)
-    return avg_nc
 
 # Read .json file (the file part)
 f = open('input.json')
@@ -119,6 +105,7 @@ with gzip.open(gzfile, mode ='r')as file:
     for ll in file:
         mylines.append(ll)
 
+########### Main code #################
 # Read .json file (the GT paramters part)
 gt_cont = []
 gt_requ = []
@@ -142,8 +129,8 @@ for nstep in range(exsnap[0], exsnap[1], exincr):
     sidx = 31009*nstep
     fidx = sidx + 31008
     sort_info = sort_info_func(mylines, sidx, fidx)
-    patch_ls, head_ls = pandh_ls(sort_info)
-    bond_ls = bond_ls_func(sort_info, linker_num, patch_ls, head_ls)
+    patch_ls, head_ls = pandh_ls(sort_info, nodeidx, edgeidx)
+    bond_ls = bond_ls_func(sort_info, linker_num, patch_ls, head_ls, npatch, nbead, colloid_num, bcutoff)
     # And this bond_ls tells all the bonding information
     # Now we have to create with linkers with both sides bonded
     realbond = []
@@ -177,14 +164,14 @@ for nstep in range(exsnap[0], exsnap[1], exincr):
     if gt_requ[6] == 1: # Nodal connectivity
         #this_gt.append(nx.node_connectivity(G))
         nconn = nx.node_connectivity(G)
+        total_ncon.append(np.array(nconn))
     if gt_requ[7] == 1: # Betweenness centrality
         between_cen = nx.betweenness_centrality(G, k=None, normalized=True, weight=None, endpoints=False, seed=None)
+        total_betc.append(np.array(between_cen))
     if gt_requ[8] == 1: # Closeness centrality
         close_cen = nx.closeness_centrality(G)
+        total_cloc.append(np.array(close_cen))
     total_para.append(np.array(this_gt))
-    total_ncon.append(np.array(nconn))
-    total_betc.append(np.array(between_cen))
-    total_cloc.append(np.array(close_cen))
 
 # Storing them into .npy files
 if len(total_para) > 0:
