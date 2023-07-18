@@ -1,0 +1,23 @@
+{
+	"file": {"filename": "quench.data.gz",
+		"extractsnap": [60, 159],
+		"extract_incre": "10",
+		"node_idx": "2",
+		"edge_idx": "3",
+		"cutoff" : "0.5",
+		"linker_number": "3000",
+		"colloid_number": "1000",
+		"patch_number": "6",
+		"bead_number": "6",
+		"label": "temp=0.2"},
+	"GT_para": 
+		{"Density": "on",
+		"Average_degree": "on",
+		"Largest_size_of_cluster": "on",
+		"Global_efficiency": "on",
+		"Assortativity_coefficient": "on",
+		"Average_clustering_coefficient": "on",
+		"Average_nodal_coefficient": "on",
+                "Betweenness_centrality": "on",
+                "Closeness_cetrality": "on"}
+}
