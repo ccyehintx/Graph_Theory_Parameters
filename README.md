@@ -19,5 +19,5 @@ Some useful graph theory parameters can be computed by this program by simply ch
 "Assortativity_coefficient"
 "Average_clustering_coefficient"
 "Average_nodal_coefficient"
- "Betweenness_centrality"
-                "Closeness_cetrality": "on"}
+"Betweenness_centrality"
+"Closeness_cetrality"
