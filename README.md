@@ -4,12 +4,19 @@ Graph theory is a useful tool to provide topological descriptions to the colloid
 Some graph thery parameters might be useful depending on the users' area of interest
 
 Edit the input.json file first to specify the snapshot file to read from
+
 In the file section:
+
 "exsnap" gives the range of time steps you wish to extract and "exincre" is the stepsize
+
 "node_idx" and "edge_idx" are the labeling of the node(colloid) and edge(linker)
+
 "cutoff" is the cutoff of the distance for the program to read as bonded
+
 "patch_number" is the number of patches on a colloid
+
 "bead_number" is the number of beads on a linker (excluding the heads)
+
 
 Some useful graph theory parameters can be computed by this program by simply change to "on", otherwise "off":
 "Density"
