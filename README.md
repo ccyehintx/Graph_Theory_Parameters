@@ -28,3 +28,11 @@ Some useful graph theory parameters can be computed by this program by simply ch
 "Average_nodal_coefficient"
 "Betweenness_centrality"
 "Closeness_cetrality"
+
+Running the script data_adjacency.py will give some more analysis based on the use of adjacency matrix, such as cluster distribution and coordination number:
+![image](https://github.com/ccyehintx/Graph_Theory_Parameters/assets/124641066/fbea2d3f-87ab-49ca-8486-3a6070a1c9c6)
+![Figure_2](https://github.com/ccyehintx/Graph_Theory_Parameters/assets/124641066/28b4692d-989e-4c8b-8aab-0f63256ca621)
+
+
+
+
